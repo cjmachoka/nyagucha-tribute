@@ -1083,3 +1083,86 @@ figure.ph figcaption {
   border: 1px solid var(--border);
   font: inherit;
 }
+
+/* ===== Mobile navigation (hamburger) ===== */
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1.35rem;
+  line-height: 1;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.site-header.on-hero .nav-toggle {
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 768px) {
+  .header-inner { padding: 0.55rem 1.1rem; }
+  .nav-toggle { display: inline-flex; }
+
+  nav[aria-label="Main"] {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+  }
+  body.nav-open nav[aria-label="Main"] { display: block; }
+
+  .site-nav {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0;
+    padding: 0.25rem 0;
+    font-size: 0.8rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  }
+  .site-nav li { width: 100%; }
+  .site-nav a {
+    display: block;
+    padding: 0.95rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .site-nav li:last-child a { border-bottom: none; }
+  .site-nav a:hover,
+  .site-nav a.active {
+    color: var(--blue);
+    border-bottom-color: var(--border);
+    background: #f6fafd;
+  }
+  /* keep the menu readable even when the header is transparent over the hero */
+  .site-header.on-hero .site-nav a { color: var(--text); }
+  .site-header.on-hero .site-nav a:hover,
+  .site-header.on-hero .site-nav a.active { color: var(--blue); }
+}
+
+/* ===== General mobile spacing & layout ===== */
+@media (max-width: 600px) {
+  .home-hero-inner { padding: 4.5rem 1.25rem 2.25rem; }
+  .home-intro { padding: 2.5rem 1.25rem; }
+  .hub-copy { padding: 1.75rem 1.25rem; }
+  .page-head { padding: 2rem 1.25rem; }
+  .container { padding: 0 1.25rem; }
+  .section { padding: 2rem 0 2.5rem; }
+  .bio-doc { padding: 2rem 1.25rem 3rem; }
+  .bio-doc-title { margin-bottom: 1.75rem; }
+  .bio-doc-title h1 { font-size: 2rem; }
+  .form-panel { padding: 1.5rem 1.25rem; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-actions { width: 100%; }
+  .hero-actions .btn { flex: 1 1 auto; text-align: center; }
+  .tribute-section-head { flex-wrap: wrap; gap: 0.2rem; }
+}
