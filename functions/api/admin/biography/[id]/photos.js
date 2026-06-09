@@ -3,7 +3,7 @@ import { uploadImage } from "../../../../_lib/upload.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request, env);
   if (denied) return denied;
 
   const chapterId = Number(params.id);

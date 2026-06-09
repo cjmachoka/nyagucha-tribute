@@ -5,7 +5,7 @@ const STATUSES = ["published", "draft"];
 
 export async function onRequest(context) {
   const { request, env, params } = context;
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request, env);
   if (denied) return denied;
 
   const id = Number(params.id);

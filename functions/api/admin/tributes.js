@@ -1,19 +1,10 @@
-const STATUSES = ["pending", "approved", "rejected"];
+import { requireAdmin, getAdminEmail } from "../../_lib/auth.js";
 
-function requireAdmin(request) {
-  const email = request.headers.get("Cf-Access-Authenticated-User-Email");
-  if (!email) {
-    return new Response(
-      JSON.stringify({ error: "Not authenticated. Sign in via Cloudflare Access." }),
-      { status: 401, headers: { "content-type": "application/json" } }
-    );
-  }
-  return null;
-}
+const STATUSES = ["pending", "approved", "rejected"];
 
 export async function onRequest(context) {
   const { request, env } = context;
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request, env);
   if (denied) return denied;
 
   if (request.method !== "GET") {
@@ -48,6 +39,6 @@ export async function onRequest(context) {
     status,
     items: results,
     counts: countMap,
-    admin: request.headers.get("Cf-Access-Authenticated-User-Email"),
+    admin: await getAdminEmail(request, env),
   });
 }

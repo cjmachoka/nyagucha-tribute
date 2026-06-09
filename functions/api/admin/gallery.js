@@ -4,7 +4,7 @@ import { GALLERY_ALBUMS, normalizeAlbum } from "../../_lib/albums.js";
 
 export async function onRequest(context) {
   const { request, env } = context;
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request, env);
   if (denied) return denied;
 
   if (request.method === "GET") return list(env);

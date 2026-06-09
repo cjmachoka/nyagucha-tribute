@@ -3,7 +3,7 @@ import { deleteImage } from "../../../../../_lib/upload.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request, env);
   if (denied) return denied;
 
   if (request.method !== "DELETE") return new Response("Method not allowed", { status: 405 });
