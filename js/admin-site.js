@@ -4,22 +4,80 @@ const TEXT_FORMS = [
   { id: "notice-form", keys: ["family_notice_heading", "family_notice_body"] },
 ];
 
-function renderHero(url) {
-  const el = document.getElementById("hero-preview");
-  const removeBtn = document.getElementById("hero-remove-btn");
-  const uploadBtn = document.getElementById("hero-upload-btn");
-  const hasPhoto = !!url;
-  if (el) {
-    el.innerHTML = hasPhoto
-      ? `<img src="${AdminUI.escapeHtml(url)}" alt="Hero photo" />`
-      : `<div class="hero-empty">
-           <span class="hero-empty-ico" aria-hidden="true">＋</span>
-           <span>No hero photo yet</span>
-           <span class="hero-empty-sub">Choose a file below to add one</span>
-         </div>`;
+let heroItems = [];
+
+function renderHeroMedia() {
+  const grid = document.getElementById("hero-media-grid");
+  if (!grid) return;
+  if (!heroItems.length) {
+    grid.innerHTML = `<div class="hero-empty">
+        <span class="hero-empty-ico" aria-hidden="true">＋</span>
+        <span>No slideshow media yet</span>
+        <span class="hero-empty-sub">Add photos or short clips below</span>
+      </div>`;
+    return;
   }
-  if (removeBtn) removeBtn.hidden = !hasPhoto;
-  if (uploadBtn) uploadBtn.textContent = hasPhoto ? "Upload & replace" : "Upload photo";
+  grid.innerHTML = "";
+  heroItems.forEach((item, idx) => {
+    const cell = document.createElement("figure");
+    cell.className = "hero-media-cell";
+    const media = item.type === "video"
+      ? `<video src="${AdminUI.escapeHtml(item.image_url)}" muted playsinline preload="metadata"></video><span class="hero-media-badge">▶ clip</span>`
+      : `<img src="${AdminUI.escapeHtml(item.image_url)}" alt="" />`;
+    cell.innerHTML = `
+      ${media}
+      <figcaption>
+        <button class="btn btn-link" data-move="up" ${idx === 0 ? "disabled" : ""} aria-label="Move earlier">↑</button>
+        <span class="hero-media-pos">${idx + 1}</span>
+        <button class="btn btn-link" data-move="down" ${idx === heroItems.length - 1 ? "disabled" : ""} aria-label="Move later">↓</button>
+        <button class="btn btn-link admin-danger" data-del aria-label="Delete">Delete</button>
+      </figcaption>`;
+    cell.querySelector("[data-del]").addEventListener("click", () => deleteHeroItem(item.id));
+    cell.querySelector('[data-move="up"]').addEventListener("click", () => moveHeroItem(idx, -1));
+    cell.querySelector('[data-move="down"]').addEventListener("click", () => moveHeroItem(idx, 1));
+    grid.appendChild(cell);
+  });
+}
+
+async function loadHeroMedia() {
+  try {
+    const data = await AdminUI.apiJSON("GET", "/api/admin/hero");
+    heroItems = data.items || [];
+    renderHeroMedia();
+  } catch (err) {
+    AdminUI.showMsg("err", err.message);
+  }
+}
+
+async function deleteHeroItem(id) {
+  if (!confirm("Remove this from the slideshow? This cannot be undone.")) return;
+  try {
+    await AdminUI.apiJSON("DELETE", `/api/admin/hero/${id}`);
+    heroItems = heroItems.filter((i) => i.id !== id);
+    renderHeroMedia();
+    AdminUI.showMsg("ok", "Removed.");
+  } catch (err) {
+    AdminUI.showMsg("err", err.message);
+  }
+}
+
+async function moveHeroItem(idx, dir) {
+  const target = idx + dir;
+  if (target < 0 || target >= heroItems.length) return;
+  const a = heroItems[idx];
+  const b = heroItems[target];
+  heroItems[idx] = b;
+  heroItems[target] = a;
+  renderHeroMedia();
+  try {
+    await Promise.all([
+      AdminUI.apiJSON("PATCH", `/api/admin/hero/${a.id}`, { position: target + 1 }),
+      AdminUI.apiJSON("PATCH", `/api/admin/hero/${b.id}`, { position: idx + 1 }),
+    ]);
+  } catch (err) {
+    AdminUI.showMsg("err", err.message);
+    loadHeroMedia();
+  }
 }
 
 async function loadSettings() {
@@ -33,7 +91,6 @@ async function loadSettings() {
         if (input) input.value = data[k] || "";
       }
     }
-    renderHero(data.hero_image_url || "");
   } catch (err) {
     AdminUI.showMsg("err", err.message);
   }
@@ -62,48 +119,41 @@ function bindHeroUpload() {
   const form = document.getElementById("hero-form");
   if (!form) return;
   const uploadBtn = document.getElementById("hero-upload-btn");
+  const progress = document.getElementById("hero-progress");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const fileInput = document.getElementById("hero-file");
-    const file = fileInput.files[0];
-    if (!file) {
-      AdminUI.showMsg("err", "Choose a photo first.");
+    const files = Array.from(fileInput.files || []);
+    if (!files.length) {
+      AdminUI.showMsg("err", "Choose at least one photo or clip.");
       return;
     }
     const label = uploadBtn ? uploadBtn.textContent : "";
-    if (uploadBtn) { uploadBtn.disabled = true; uploadBtn.textContent = "Uploading…"; }
-    try {
-      const resized = await AdminUI.resizeImage(file, { maxDim: 2400, quality: 0.85 });
-      const fd = new FormData();
-      fd.append("file", resized);
-      const res = await AdminUI.apiUpload("/api/admin/settings", fd);
-      renderHero(res.url);
-      AdminUI.showMsg("ok", "Hero photo updated.");
-      fileInput.value = "";
-    } catch (err) {
-      AdminUI.showMsg("err", err.message);
-    } finally {
-      if (uploadBtn) { uploadBtn.disabled = false; uploadBtn.textContent = label || "Upload & replace"; }
-    }
-  });
-}
+    if (uploadBtn) uploadBtn.disabled = true;
 
-function bindHeroRemove() {
-  const btn = document.getElementById("hero-remove-btn");
-  if (!btn) return;
-  btn.addEventListener("click", async () => {
-    if (!confirm("Remove the hero photo? The home page will fall back to the plain header.")) return;
-    btn.disabled = true;
-    try {
-      await AdminUI.apiJSON("DELETE", "/api/admin/settings");
-      const fileInput = document.getElementById("hero-file");
-      if (fileInput) fileInput.value = "";
-      renderHero("");
-      AdminUI.showMsg("ok", "Hero photo removed.");
-    } catch (err) {
-      AdminUI.showMsg("err", err.message);
-    } finally {
-      btn.disabled = false;
+    let done = 0;
+    let failed = 0;
+    for (const file of files) {
+      done += 1;
+      if (progress) progress.textContent = `Uploading ${done} of ${files.length}…`;
+      try {
+        const isVideo = /^video\//.test(file.type);
+        const payload = isVideo ? file : await AdminUI.resizeImage(file, { maxDim: 2400, quality: 0.85 });
+        const fd = new FormData();
+        fd.append("file", payload);
+        await AdminUI.apiUpload("/api/admin/hero", fd);
+      } catch (err) {
+        failed += 1;
+        AdminUI.showMsg("err", `${file.name}: ${err.message}`);
+      }
+    }
+
+    if (progress) progress.textContent = "";
+    fileInput.value = "";
+    if (uploadBtn) { uploadBtn.disabled = false; uploadBtn.textContent = label || "Add to slideshow"; }
+    await loadHeroMedia();
+    if (failed < files.length) {
+      AdminUI.showMsg("ok", `Added ${files.length - failed} item${files.length - failed === 1 ? "" : "s"} to the slideshow.`);
     }
   });
 }
@@ -111,6 +161,6 @@ function bindHeroRemove() {
 document.addEventListener("DOMContentLoaded", () => {
   TEXT_FORMS.forEach(bindTextForm);
   bindHeroUpload();
-  bindHeroRemove();
+  loadHeroMedia();
   loadSettings();
 });

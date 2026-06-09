@@ -22,6 +22,16 @@ export async function onRequest(context) {
   const settings = Object.fromEntries(PUBLIC_KEYS.map((k) => [k, ""]));
   for (const row of results) settings[row.key] = row.value ?? "";
 
+  settings.hero_media = [];
+  try {
+    const { results: media } = await env.DB.prepare(
+      `SELECT type, image_url FROM hero_media ORDER BY position ASC, id ASC`
+    ).all();
+    settings.hero_media = (media || []).map((m) => ({ type: m.type, url: m.image_url }));
+  } catch (_) {
+    // hero_media table not created yet — fall back to single hero image
+  }
+
   return Response.json(settings, {
     headers: { "cache-control": "public, max-age=60" },
   });

@@ -43,13 +43,13 @@
 
       <div class="admin-content">
         <section class="card">
-          <h2 class="card-title">Hero photo <span class="hint">shown full-width on the home page · JPG/PNG/WebP · large photos are resized automatically</span></h2>
-          <div class="hero-preview" id="hero-preview"></div>
+          <h2 class="card-title">Hero slideshow <span class="hint">photos &amp; short clips that auto-rotate on the home page · JPG/PNG/WebP or MP4/WebM video (max 30 MB) · large photos are resized automatically · add more anytime</span></h2>
+          <div class="hero-media-grid" id="hero-media-grid"></div>
           <form id="hero-form" class="admin-inline-form">
-            <input type="file" id="hero-file" name="file" accept="image/jpeg,image/png,image/webp" required />
-            <button type="submit" class="btn btn-primary" id="hero-upload-btn">Upload &amp; replace</button>
-            <button type="button" class="btn btn-ghost admin-danger" id="hero-remove-btn" hidden>Remove photo</button>
+            <input type="file" id="hero-file" name="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" multiple required />
+            <button type="submit" class="btn btn-primary" id="hero-upload-btn">Add to slideshow</button>
           </form>
+          <div class="hero-progress" id="hero-progress"></div>
         </section>
 
         <section class="card">

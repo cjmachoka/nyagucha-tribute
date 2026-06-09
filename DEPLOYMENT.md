@@ -102,8 +102,8 @@ DEPLOYMENT.md         this guide
 | Cloudflare Access on `/admin` + `/api/admin` | Done |
 | Resend email notification on new tribute | Next |
 | Turnstile spam protection | Optional |
-| Custom domain | When name decided |
-| Email Routing (`tributes@yourdomain`) | After domain |
+| Custom domain (`vincentnyagucha.org`) | Bought — attach in Pages + Access (step 11) |
+| Email Routing (`tributes@vincentnyagucha.org`) | After domain attached |
 
 > The site is **live and read-only** right now. Submissions save to D1 as
 > `pending` but there is no admin UI to approve them yet — that's the next
@@ -388,13 +388,31 @@ affecting site access.
 
 ---
 
-## 11. Custom domain (when you + sister decide the name)
+## 11. Custom domain — `vincentnyagucha.org`
 
-1. Buy the domain at a registrar
-2. Cloudflare → **Add a site** → enter domain → **Free** plan
-3. Set the registrar's **nameservers** to Cloudflare's → wait for **Active**
-4. Pages project → **Custom domains** → **Set up a custom domain** → enter name → **Activate**
-5. Add the domain to **Turnstile** and **Access**, then finish **Resend** (step 7) and **Email Routing** (step 10)
+Bought through **Cloudflare Registrar**, so the domain is already in the account
+and Active. No "Add a site" / nameserver step is needed — skip straight to
+attaching it and re-locking admin.
+
+**A. Attach to the site**
+1. **Workers & Pages → nyagucha-tribute → Custom domains** tab
+2. **Set up a custom domain** → `vincentnyagucha.org` → **Continue** → **Activate domain**
+3. DNS record is added automatically → wait for **Active**
+4. *(Optional)* repeat for `www.vincentnyagucha.org`
+
+**B. Re-lock admin (Cloudflare Access)**
+- **Zero Trust → Access → Applications → (admin app) → Edit → Destinations**
+- Keep the `*.pages.dev` entries and add (plus `www.` versions if used):
+
+  | Hostname | Path |
+  |----------|------|
+  | `vincentnyagucha.org` | `admin` |
+  | `vincentnyagucha.org` | `api/admin` |
+
+**C. Later (email)** — finish **Resend** (step 7) verifying `vincentnyagucha.org`,
+and **Email Routing** (step 10) for `tributes@vincentnyagucha.org`.
+
+**Unchanged:** code, D1, R2, admin email, and the `*.pages.dev` URL (kept as fallback).
 
 ---
 
