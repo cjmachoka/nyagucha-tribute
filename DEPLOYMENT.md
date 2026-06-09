@@ -53,14 +53,20 @@ DEPLOYMENT.md         this guide
 | Guestbook form + validation | Done |
 | Sectionalized tributes (with JSON fallback) | Done |
 | API: submit + list tributes | Done (basic) |
-| D1 schema (tributes) | Done |
-| R2 photo upload | TODO in `functions/api/tributes.js` |
-| Resend email notification | TODO in `functions/api/tributes.js` |
-| Turnstile verification | TODO |
-| Admin panel (`/admin`) | TODO |
-| Announcements table + admin | TODO |
+| D1 database created + schema applied + bound | Done |
+| R2 bucket created + bound | Done (plumbing only — upload code TODO) |
+| Site live on `*.pages.dev` | Done |
+| Admin panel (`/admin`) — approve / reject tributes | **NEXT** |
+| Resend email notification on new tribute | After admin |
+| Photo upload code (uses R2) | After admin |
+| Turnstile spam protection | After upload code |
+| Cloudflare Access on `/admin` | Pairs with admin page |
+| Custom domain | When name decided |
+| Email Routing (`tributes@yourdomain`) | After domain |
 
-> Sections marked **TODO** are wired during the build before final launch.
+> The site is **live and read-only** right now. Submissions save to D1 as
+> `pending` but there is no admin UI to approve them yet — that's the next
+> build piece.
 
 ---
 
@@ -150,18 +156,14 @@ git add wrangler.toml && git commit -m "Add D1 database id" && git push
 
 ---
 
-## 5. Photo storage — Cloudflare R2 (later phase)
-
-> **Skip this until we build photo uploads.** The upload code is still a TODO in
-> `functions/api/tributes.js`. Adding an R2 binding before the bucket/feature is
-> ready can fail the deploy (like the bad D1 UUID did).
+## 5. Photo storage — Cloudflare R2
 
 > **Bindings are managed in `wrangler.toml`, not the dashboard.** Because this
 > project has a `wrangler.toml`, the dashboard shows *"Bindings for this project
 > are being managed through wrangler.toml"* and the **Add** button is disabled.
 > That's expected — all bindings (D1, R2) are added by editing `wrangler.toml`.
 
-**A. Create the bucket** (when ready)
+**A. Create the bucket** (in the dashboard)
 1. **dash.cloudflare.com** → top search bar → type **`R2`** → **R2 Object Storage**
    (first use asks you to enable R2 — free tier)
 2. **Create bucket** → name: `nyagucha-images` → **Create**
@@ -174,20 +176,32 @@ binding = "IMAGES"
 bucket_name = "nyagucha-images"
 ```
 
+> ⚠️ **Order matters:** create the bucket **before** pushing the binding, or the
+> deploy fails with *"R2 bucket nyagucha-images not found"*.
+
+> **Note:** the bucket is now wired up but **nothing on the site uses it yet** —
+> the photo-upload code in `functions/api/tributes.js` is still a TODO. We'll
+> build that feature in a later pass; this just gets the plumbing in place.
+
 ---
 
 ## 6. Environment variables (secrets)
 
-Pages project → **Settings** → **Environment variables** → **Production**:
+> **You can skip this step entirely for now.** None of the env vars below are
+> needed until we build the features that use them. Come back here after the
+> matching step is done.
 
-| Variable | Value | When |
-|----------|-------|------|
-| `NOTIFY_EMAIL` | memorial Gmail, or `tributes@yourdomain` | now / after domain |
-| `RESEND_API_KEY` | from Resend | after domain verified |
-| `FROM_EMAIL` | `noreply@yourdomain.com` | after domain |
-| `TURNSTILE_SECRET_KEY` | from Turnstile | step 8 |
+When you do need them: Pages project → **Settings** → **Variables and Secrets**
+→ **Production** → **Add variable**.
 
-Save → **Redeploy**.
+| Variable | Value | Set it when |
+|----------|-------|-------------|
+| `NOTIFY_EMAIL` | your Gmail (now), or `tributes@yourdomain` (later) | Step 7 — after Resend is wired |
+| `RESEND_API_KEY` | from Resend dashboard | Step 7 — after domain is verified |
+| `FROM_EMAIL` | `noreply@yourdomain.com` | Step 7 — after domain is verified |
+| `TURNSTILE_SECRET_KEY` | from Turnstile dashboard | Step 8 — after spam protection is wired |
+
+After adding any variable, redeploy: **Deployments** → top deployment → **⋯** → **Retry deployment**.
 
 ---
 
