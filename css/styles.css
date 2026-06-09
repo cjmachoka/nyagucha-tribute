@@ -290,7 +290,6 @@ a:hover { color: var(--blue-dark); }
 .hub-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-top: 1px solid var(--border);
 }
 
 .hub-row.reverse .hub-media { order: 2; }
@@ -306,7 +305,6 @@ a:hover { color: var(--blue-dark); }
   position: relative;
   min-height: 300px;
   background: var(--placeholder);
-  border-right: 1px solid var(--border);
   overflow: hidden;
 }
 
@@ -347,15 +345,6 @@ a:hover { color: var(--blue-dark); }
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.24);
 }
 
-.hub-row.reverse .hub-media {
-  border-right: none;
-  border-left: 1px solid var(--border);
-}
-
-@media (max-width: 768px) {
-  .hub-media { border-right: none !important; border-left: none !important; border-bottom: 1px solid var(--border); }
-}
-
 .hub-copy {
   padding: 2.25rem 2.5rem;
   display: flex;
@@ -379,6 +368,9 @@ a:hover { color: var(--blue-dark); }
   margin: 0 0 1.25rem;
   color: var(--text);
 }
+
+/* Keep section buttons only as wide as their text (not stretched by the flex column) */
+.hub-copy .btn { align-self: flex-start; }
 
 /* Page shell */
 .page-head {
