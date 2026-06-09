@@ -112,6 +112,71 @@ async function moveHeroItem(idx, dir) {
   }
 }
 
+const SECTION_PHOTOS = [
+  { slot: "notice", label: "Family notice" },
+  { slot: "biography", label: "Biography" },
+  { slot: "tributes", label: "Tributes" },
+  { slot: "gallery", label: "Gallery" },
+  { slot: "guestbook", label: "Guestbook" },
+];
+
+function renderSectionPhotos(settings) {
+  const wrap = document.getElementById("section-photos");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  SECTION_PHOTOS.forEach((sec) => {
+    const url = settings[`${sec.slot}_image_url`] || "";
+    const cell = document.createElement("div");
+    cell.className = "section-photo";
+    cell.innerHTML = `
+      <h3>${sec.label}</h3>
+      <div class="section-photo-preview">${url ? `<img src="${AdminUI.escapeHtml(url)}" alt="" />` : `<span class="section-photo-empty">No photo</span>`}</div>
+      <div class="section-photo-actions">
+        <input type="file" accept="image/jpeg,image/png,image/webp" />
+        <button class="btn btn-primary" data-up>Upload</button>
+        <button class="btn btn-link admin-danger" data-rm ${url ? "" : "hidden"}>Remove</button>
+      </div>`;
+    const fileInput = cell.querySelector("input");
+    cell.querySelector("[data-up]").addEventListener("click", () => uploadSectionPhoto(sec.slot, fileInput, cell));
+    cell.querySelector("[data-rm]").addEventListener("click", () => removeSectionPhoto(sec.slot, cell));
+    wrap.appendChild(cell);
+  });
+}
+
+async function uploadSectionPhoto(slot, fileInput, cell) {
+  const file = fileInput.files[0];
+  if (!file) { AdminUI.showMsg("err", "Choose a photo first."); return; }
+  const btn = cell.querySelector("[data-up]");
+  btn.disabled = true;
+  try {
+    const resized = await AdminUI.resizeImage(file, { maxDim: 2000, quality: 0.85 });
+    const fd = new FormData();
+    fd.append("file", resized);
+    fd.append("slot", slot);
+    const res = await AdminUI.apiUpload("/api/admin/settings", fd);
+    cell.querySelector(".section-photo-preview").innerHTML = `<img src="${AdminUI.escapeHtml(res.url)}" alt="" />`;
+    cell.querySelector("[data-rm]").hidden = false;
+    fileInput.value = "";
+    AdminUI.showMsg("ok", "Photo updated.");
+  } catch (err) {
+    AdminUI.showMsg("err", err.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function removeSectionPhoto(slot, cell) {
+  if (!confirm("Remove this photo?")) return;
+  try {
+    await AdminUI.apiJSON("DELETE", `/api/admin/settings?slot=${slot}`);
+    cell.querySelector(".section-photo-preview").innerHTML = `<span class="section-photo-empty">No photo</span>`;
+    cell.querySelector("[data-rm]").hidden = true;
+    AdminUI.showMsg("ok", "Removed.");
+  } catch (err) {
+    AdminUI.showMsg("err", err.message);
+  }
+}
+
 async function loadSettings() {
   try {
     const data = await AdminUI.apiJSON("GET", "/api/admin/settings");
@@ -123,6 +188,7 @@ async function loadSettings() {
         if (input) input.value = data[k] || "";
       }
     }
+    renderSectionPhotos(data);
   } catch (err) {
     AdminUI.showMsg("err", err.message);
   }

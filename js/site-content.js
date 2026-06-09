@@ -22,6 +22,14 @@
         el.textContent = value;
       }
     });
+    document.querySelectorAll("[data-hub-bg]").forEach((el) => {
+      const url = s[`${el.dataset.hubBg}_image_url`];
+      if (url) {
+        el.style.backgroundImage = `url("${url}")`;
+        el.classList.add("has-photo");
+      }
+    });
+
     const media = Array.isArray(s.hero_media) ? s.hero_media.filter((m) => m && m.url) : [];
     if (hero && media.length) {
       startHeroSlideshow(hero, media);

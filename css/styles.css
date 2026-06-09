@@ -305,8 +305,13 @@ a:hover { color: var(--blue-dark); }
 .hub-media {
   min-height: 300px;
   background: var(--placeholder);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border-right: 1px solid var(--border);
 }
+
+.hub-media.has-photo { background-color: transparent; }
 
 .hub-row.reverse .hub-media {
   border-right: none;

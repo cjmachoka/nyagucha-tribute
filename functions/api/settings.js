@@ -7,6 +7,11 @@ const PUBLIC_KEYS = [
   "intro_body",
   "family_notice_heading",
   "family_notice_body",
+  "notice_image_url",
+  "biography_image_url",
+  "tributes_image_url",
+  "gallery_image_url",
+  "guestbook_image_url",
 ];
 
 export async function onRequest(context) {
