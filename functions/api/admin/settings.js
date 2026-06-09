@@ -21,6 +21,7 @@ export async function onRequest(context) {
   if (request.method === "GET") return getAll(env);
   if (request.method === "PATCH") return patchSettings(request, env);
   if (request.method === "POST") return uploadHero(request, env);
+  if (request.method === "DELETE") return deleteHero(env);
   return new Response("Method not allowed", { status: 405 });
 }
 
@@ -84,4 +85,22 @@ async function uploadHero(request, env) {
   ]);
 
   return Response.json({ ok: true, ...uploaded });
+}
+
+async function deleteHero(env) {
+  const prev = await env.DB.prepare(`SELECT value FROM site_settings WHERE key = 'hero_image_key'`).first();
+  if (prev?.value) await deleteImage(env, prev.value);
+
+  await env.DB.batch([
+    env.DB.prepare(
+      `INSERT INTO site_settings (key, value, updated_at) VALUES ('hero_image_key', '', datetime('now'))
+       ON CONFLICT(key) DO UPDATE SET value = '', updated_at = datetime('now')`
+    ),
+    env.DB.prepare(
+      `INSERT INTO site_settings (key, value, updated_at) VALUES ('hero_image_url', '', datetime('now'))
+       ON CONFLICT(key) DO UPDATE SET value = '', updated_at = datetime('now')`
+    ),
+  ]);
+
+  return Response.json({ ok: true });
 }
