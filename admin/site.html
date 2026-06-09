@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Site — Dr. Vincent Magubo Nyagucha</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../index.html" class="brand">
+        <div class="brand-mark">VN</div>
+        <div class="brand-text">
+          <div class="brand-name">Dr. Vincent Nyagucha</div>
+          <div class="brand-role">Family admin</div>
+        </div>
+      </a>
+      <nav aria-label="Main">
+        <ul class="site-nav">
+          <li><a href="../index.html">View site</a></li>
+          <li><a href="index.html" class="active">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-head">
+    <div class="page-head-inner">
+      <h1>Site content</h1>
+      <p>Hero photo, dates, opening words, family notice</p>
+    </div>
+  </div>
+
+  <nav class="admin-subnav">
+    <div class="admin-subnav-inner">
+      <a href="index.html">Tributes</a>
+      <a href="site.html" class="active">Site</a>
+      <a href="announcements.html">Announcements</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="biography.html">Biography</a>
+    </div>
+  </nav>
+
+  <main class="section">
+    <div class="container">
+      <div id="admin-msg" class="form-msg" hidden></div>
+
+      <section class="admin-block">
+        <h2>Hero photo</h2>
+        <p class="form-hint">Shown full-width on the home page. JPG, PNG or WebP. 5 MB max. Landscape orientation works best.</p>
+        <div class="hero-preview" id="hero-preview"></div>
+        <form id="hero-form" class="admin-inline-form">
+          <input type="file" id="hero-file" name="file" accept="image/jpeg,image/png,image/webp" required />
+          <button type="submit" class="btn btn-primary">Upload &amp; replace</button>
+        </form>
+      </section>
+
+      <section class="admin-block">
+        <h2>Hero text</h2>
+        <form id="hero-text-form">
+          <div class="form-group">
+            <label for="hero_eyebrow">Eyebrow (small text above the name)</label>
+            <input type="text" id="hero_eyebrow" name="hero_eyebrow" />
+          </div>
+          <div class="form-group">
+            <label for="hero_name">Name (heading)</label>
+            <input type="text" id="hero_name" name="hero_name" />
+          </div>
+          <div class="form-group">
+            <label for="hero_meta">Subtitle (e.g. Ophthalmologist · 1953 – 2026)</label>
+            <input type="text" id="hero_meta" name="hero_meta" />
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </section>
+
+      <section class="admin-block">
+        <h2>Opening section</h2>
+        <form id="intro-form">
+          <div class="form-group">
+            <label for="intro_heading">Heading</label>
+            <input type="text" id="intro_heading" name="intro_heading" />
+          </div>
+          <div class="form-group">
+            <label for="intro_body">Body</label>
+            <textarea id="intro_body" name="intro_body" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </section>
+
+      <section class="admin-block">
+        <h2>Family notice card (home page)</h2>
+        <form id="notice-form">
+          <div class="form-group">
+            <label for="family_notice_heading">Heading</label>
+            <input type="text" id="family_notice_heading" name="family_notice_heading" />
+          </div>
+          <div class="form-group">
+            <label for="family_notice_body">Body</label>
+            <textarea id="family_notice_body" name="family_notice_body" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-bar">In loving memory of Dr. Vincent Magubo Nyagucha</div>
+    <div class="footer-credit"><p>Made with love by Caleb Machoka</p></div>
+  </footer>
+
+  <script src="../js/admin-common.js"></script>
+  <script src="../js/admin-site.js"></script>
+</body>
+</html>

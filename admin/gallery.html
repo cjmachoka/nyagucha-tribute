@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Dr. Vincent Magubo Nyagucha</title>
+  <title>Admin · Gallery — Dr. Vincent Magubo Nyagucha</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,8 +24,6 @@
       <nav aria-label="Main">
         <ul class="site-nav">
           <li><a href="../index.html">View site</a></li>
-          <li><a href="../tributes.html">Tributes</a></li>
-          <li><a href="../guestbook.html">Guestbook</a></li>
           <li><a href="index.html" class="active">Admin</a></li>
         </ul>
       </nav>
@@ -34,33 +32,47 @@
 
   <div class="page-head">
     <div class="page-head-inner">
-      <h1>Family admin</h1>
-      <p id="admin-who">Signed in</p>
+      <h1>Gallery</h1>
+      <p>Photo collection shown on the Gallery page</p>
     </div>
   </div>
 
   <nav class="admin-subnav">
     <div class="admin-subnav-inner">
-      <a href="index.html" class="active">Tributes</a>
+      <a href="index.html">Tributes</a>
       <a href="site.html">Site</a>
       <a href="announcements.html">Announcements</a>
-      <a href="gallery.html">Gallery</a>
+      <a href="gallery.html" class="active">Gallery</a>
       <a href="biography.html">Biography</a>
     </div>
   </nav>
 
   <main class="section">
     <div class="container">
-      <div class="admin-tabs" role="tablist">
-        <button class="admin-tab active" data-status="pending" type="button">Pending <span class="tab-count" id="count-pending">0</span></button>
-        <button class="admin-tab" data-status="approved" type="button">Approved <span class="tab-count" id="count-approved">0</span></button>
-        <button class="admin-tab" data-status="rejected" type="button">Rejected <span class="tab-count" id="count-rejected">0</span></button>
-      </div>
-
       <div id="admin-msg" class="form-msg" hidden></div>
-      <div id="admin-list" class="admin-list">
-        <p class="form-hint">Loading…</p>
-      </div>
+
+      <section class="admin-block">
+        <h2>Add a photo</h2>
+        <form id="gallery-form">
+          <div class="form-group">
+            <label for="gal-file">Image</label>
+            <input type="file" id="gal-file" name="file" accept="image/jpeg,image/png,image/webp" required />
+            <p class="form-hint">JPG, PNG or WebP · 5 MB max.</p>
+          </div>
+          <div class="form-group">
+            <label for="gal-caption">Caption (optional)</label>
+            <input type="text" id="gal-caption" name="caption" />
+          </div>
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+      </section>
+
+      <section class="admin-block">
+        <h2>Photos</h2>
+        <div id="gallery-list" class="admin-gallery-grid">
+          <p class="form-hint">Loading…</p>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -69,6 +81,7 @@
     <div class="footer-credit"><p>Made with love by Caleb Machoka</p></div>
   </footer>
 
-  <script src="../js/admin.js"></script>
+  <script src="../js/admin-common.js"></script>
+  <script src="../js/admin-gallery.js"></script>
 </body>
 </html>

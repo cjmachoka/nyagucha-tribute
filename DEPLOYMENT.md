@@ -27,24 +27,57 @@ A step-by-step runbook to take this site live on **Cloudflare** (Path B: public 
 ### Files in this project
 
 ```
-index.html            Home (photo hero + section hub)
-biography.html        Systematic life chapters
-tributes.html         Sectionalized tribute messages
-gallery.html          Photo album
+index.html            Home (hero photo + intro + hub)
+biography.html        Systematic life chapters (loads from API)
+tributes.html         Sectionalized tribute messages (loads from API)
+gallery.html          Photo album (loads from API)
 guestbook.html        Submit form (moderated)
-announcements.html    Family notice + condolence messages
+announcements.html    Family notice + condolence messages (loads from API)
 css/styles.css        Crisp design (one stylesheet)
+js/site-content.js    Loads hero photo + site settings on every page
+js/announcements.js   Loads announcements list
+js/gallery.js         Loads gallery photos
+js/biography.js       Loads biography chapters + photos
 js/tributes.js        Loads + groups tributes by section
 js/guestbook.js       Validates + submits guestbook
 data/tributes.json    Sample tributes (fallback before D1)
-data/biography.json   Biography structure
-admin/index.html      Admin panel (locked by Cloudflare Access)
-js/admin.js           Admin logic (approve/reject/delete)
-functions/api/tributes.js   Public API: GET approved, POST pending
-functions/api/admin/tributes.js       Admin API: GET pending/approved/rejected
-functions/api/admin/tributes/[id].js  Admin API: PATCH (approve/reject), DELETE
-schema.sql            D1 table: tributes
-wrangler.toml         D1 binding config (needs real database_id)
+data/biography.json   Biography structure (legacy fallback)
+
+admin/index.html              Tributes (approve/reject)
+admin/site.html               Hero photo, hero text, intro, family notice
+admin/announcements.html      Create / edit / delete announcements
+admin/gallery.html            Upload / edit / delete gallery photos
+admin/biography.html          Chapters and chapter photos
+js/admin-common.js            Shared admin utilities (auth, fetch, escape)
+js/admin.js                   Tributes admin logic
+js/admin-site.js              Site settings admin
+js/admin-announcements.js     Announcements admin
+js/admin-gallery.js           Gallery admin
+js/admin-biography.js         Biography admin
+
+functions/_lib/auth.js                          Admin auth (Cf-Access header)
+functions/_lib/upload.js                        R2 upload + validation helper
+functions/images/[[path]].js                    Streams images from R2 with caching
+functions/api/tributes.js                       Public: GET approved, POST pending
+functions/api/settings.js                       Public: GET site settings
+functions/api/announcements.js                  Public: GET published announcements
+functions/api/gallery.js                        Public: GET published photos
+functions/api/biography.js                      Public: GET published chapters
+functions/api/admin/tributes.js                 Admin: GET by status
+functions/api/admin/tributes/[id].js            Admin: PATCH / DELETE
+functions/api/admin/settings.js                 Admin: GET / PATCH / POST (hero upload)
+functions/api/admin/announcements.js            Admin: GET / POST
+functions/api/admin/announcements/[id].js       Admin: PATCH / DELETE
+functions/api/admin/gallery.js                  Admin: GET / POST (upload)
+functions/api/admin/gallery/[id].js             Admin: PATCH / DELETE
+functions/api/admin/biography.js                Admin: GET / POST
+functions/api/admin/biography/[id].js           Admin: PATCH / DELETE chapter
+functions/api/admin/biography/[id]/photos.js    Admin: GET / POST chapter photos
+functions/api/admin/biography/[id]/photos/[photoId].js  Admin: DELETE chapter photo
+
+schema.sql            D1 base: tributes table
+schema-cms.sql        D1 CMS: site_settings, announcements, gallery, biography
+wrangler.toml         D1 + R2 binding config
 package.json          helper scripts (CLI; not usable on this machine)
 DEPLOYMENT.md         this guide
 ```
@@ -57,14 +90,18 @@ DEPLOYMENT.md         this guide
 | Guestbook form + validation | Done |
 | Sectionalized tributes (with JSON fallback) | Done |
 | API: submit + list tributes | Done (basic) |
-| D1 database created + schema applied + bound | Done |
-| R2 bucket created + bound | Done (plumbing only — upload code TODO) |
+| D1 database + tributes schema | Done |
+| D1 CMS schema (`schema-cms.sql`) | **Run once in D1 Console after pulling this update** |
+| R2 bucket created + bound | Done |
 | Site live on `*.pages.dev` | Done |
-| Admin panel (`/admin`) — approve / reject / delete | Done (code) — needs Access lock |
-| Cloudflare Access on `/admin` + `/api/admin` | **NEXT** (Step 9) |
-| Resend email notification on new tribute | After Access |
-| Photo upload code (uses R2) | After Access |
-| Turnstile spam protection | After upload code |
+| Admin: Tributes (approve / reject / delete) | Done |
+| Admin: Site (hero photo, hero text, intro, family notice) | Done |
+| Admin: Announcements (full CRUD) | Done |
+| Admin: Gallery (upload / caption / delete) | Done |
+| Admin: Biography (chapters + per-chapter photos) | Done |
+| Cloudflare Access on `/admin` + `/api/admin` | Done |
+| Resend email notification on new tribute | Next |
+| Turnstile spam protection | Optional |
 | Custom domain | When name decided |
 | Email Routing (`tributes@yourdomain`) | After domain |
 
@@ -151,12 +188,20 @@ database_id = "PASTE-YOUR-REAL-UUID-HERE"
 git add wrangler.toml && git commit -m "Add D1 database id" && git push
 ```
 
-**C. Create the table** (no CLI — use the dashboard console)
+**C. Create the tables** (no CLI — use the dashboard console)
 1. Database page → **Console** tab
-2. Paste the contents of `schema.sql` and run it (creates the `tributes` table + indexes)
+2. Paste the contents of `schema.sql` and **Run** — creates the `tributes` table
+3. Paste the contents of `schema-cms.sql` and **Run** — creates the CMS tables
+   (`site_settings`, `announcements`, `gallery_photos`, `bio_chapters`,
+   `bio_chapter_photos`) and seeds them with the current page defaults so the
+   site keeps looking the same before any edits
 
 > Because the binding lives in `wrangler.toml` (`binding = "DB"`), the Function
 > picks it up automatically on the next deploy — no separate dashboard binding step needed.
+
+> **Re-running the migrations is safe** — every table uses `IF NOT EXISTS` and
+> every seed uses `INSERT OR IGNORE`. If a future build adds more tables, you'll
+> see a new `schema-*.sql` file to paste into the Console.
 
 ---
 
@@ -272,6 +317,40 @@ someone could call it directly):
 
 Once logged in, the same session works for the API automatically (Access sets a
 cookie that the admin page sends along).
+
+---
+
+## 9b. Admin tour (what each page does)
+
+All five admin pages share the same login. Click between them using the row of
+tabs (`Tributes · Site · Announcements · Gallery · Biography`).
+
+| Page | URL | What you do here |
+|------|-----|------------------|
+| Tributes | `/admin/` | Approve, reject, or delete guestbook submissions. Change their section. |
+| Site | `/admin/site.html` | Upload the **hero photo**. Edit the hero text (eyebrow, name, subtitle), the opening section, and the family-notice card on the home page. |
+| Announcements | `/admin/announcements.html` | Add / edit / delete the items on `/announcements`. Pin important ones to the top. Choose a type (family notice, funeral, memorial, condolence, news, general). |
+| Gallery | `/admin/gallery.html` | Upload photos to the gallery (5 MB max, JPG/PNG/WebP). Edit captions. Delete. |
+| Biography | `/admin/biography.html` | Add or edit life chapters. Upload multiple photos per chapter with captions. Publish or move to draft. |
+
+### Important: photos and the R2 bucket
+
+- All uploaded photos go to the **`nyagucha-images`** R2 bucket.
+- They're served from `/images/<key>` through the `functions/images/[[path]].js`
+  endpoint (cached at the edge for a year).
+- When you **delete** a photo or chapter, the underlying R2 object is deleted too.
+
+### How content reaches the live site
+
+The public pages now load their content from the API:
+
+- `index.html` → `/api/settings` (hero image + hero text + family notice)
+- `announcements.html` → `/api/announcements`
+- `gallery.html` → `/api/gallery`
+- `biography.html` → `/api/biography`
+- `tributes.html` → `/api/tributes`
+
+So a change made in `/admin` is live as soon as you save — no git push needed.
 
 ---
 

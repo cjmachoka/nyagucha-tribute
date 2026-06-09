@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Dr. Vincent Magubo Nyagucha</title>
+  <title>Admin · Biography — Dr. Vincent Magubo Nyagucha</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,8 +24,6 @@
       <nav aria-label="Main">
         <ul class="site-nav">
           <li><a href="../index.html">View site</a></li>
-          <li><a href="../tributes.html">Tributes</a></li>
-          <li><a href="../guestbook.html">Guestbook</a></li>
           <li><a href="index.html" class="active">Admin</a></li>
         </ul>
       </nav>
@@ -34,33 +32,46 @@
 
   <div class="page-head">
     <div class="page-head-inner">
-      <h1>Family admin</h1>
-      <p id="admin-who">Signed in</p>
+      <h1>Biography</h1>
+      <p>Life chapters and chapter photos</p>
     </div>
   </div>
 
   <nav class="admin-subnav">
     <div class="admin-subnav-inner">
-      <a href="index.html" class="active">Tributes</a>
+      <a href="index.html">Tributes</a>
       <a href="site.html">Site</a>
       <a href="announcements.html">Announcements</a>
       <a href="gallery.html">Gallery</a>
-      <a href="biography.html">Biography</a>
+      <a href="biography.html" class="active">Biography</a>
     </div>
   </nav>
 
   <main class="section">
     <div class="container">
-      <div class="admin-tabs" role="tablist">
-        <button class="admin-tab active" data-status="pending" type="button">Pending <span class="tab-count" id="count-pending">0</span></button>
-        <button class="admin-tab" data-status="approved" type="button">Approved <span class="tab-count" id="count-approved">0</span></button>
-        <button class="admin-tab" data-status="rejected" type="button">Rejected <span class="tab-count" id="count-rejected">0</span></button>
-      </div>
-
       <div id="admin-msg" class="form-msg" hidden></div>
-      <div id="admin-list" class="admin-list">
-        <p class="form-hint">Loading…</p>
-      </div>
+
+      <section class="admin-block">
+        <h2>Add a chapter</h2>
+        <form id="chapter-form">
+          <div class="form-group">
+            <label for="ch-title">Title</label>
+            <input type="text" id="ch-title" name="title" required />
+          </div>
+          <div class="form-group">
+            <label for="ch-body">Body</label>
+            <textarea id="ch-body" name="body" rows="5" required placeholder="Paragraphs separated by a blank line."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Add chapter</button>
+        </form>
+      </section>
+
+      <section class="admin-block">
+        <h2>Chapters</h2>
+        <div id="chapter-list">
+          <p class="form-hint">Loading…</p>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -69,6 +80,7 @@
     <div class="footer-credit"><p>Made with love by Caleb Machoka</p></div>
   </footer>
 
-  <script src="../js/admin.js"></script>
+  <script src="../js/admin-common.js"></script>
+  <script src="../js/admin-biography.js"></script>
 </body>
 </html>
