@@ -18,15 +18,44 @@ window.AdminUI = (function () {
     });
   }
 
-  function showMsg(type, text, autoHide = true) {
-    const el = document.getElementById("admin-msg");
-    if (!el) return;
-    el.className = `form-msg ${type === "ok" ? "ok" : "err"}`;
-    el.textContent = text;
-    el.hidden = false;
-    if (autoHide && type === "ok") {
-      clearTimeout(showMsg._t);
-      showMsg._t = setTimeout(() => { el.hidden = true; }, 2500);
+  function toastRoot() {
+    let root = document.getElementById("toast-root");
+    if (!root) {
+      root = document.createElement("div");
+      root.id = "toast-root";
+      document.body.appendChild(root);
+    }
+    return root;
+  }
+
+  function showMsg(type, text) {
+    const root = toastRoot();
+    const toast = document.createElement("div");
+    const ok = type === "ok";
+    toast.className = `toast ${ok ? "ok" : "err"}`;
+    toast.innerHTML = `<span class="toast-ico">${ok ? "✓" : "!"}</span><span></span>`;
+    toast.lastChild.textContent = text;
+    root.appendChild(toast);
+    const ttl = ok ? 2600 : 4500;
+    setTimeout(() => {
+      toast.classList.add("hide");
+      setTimeout(() => toast.remove(), 220);
+    }, ttl);
+  }
+
+  function initShell() {
+    const toggle = document.querySelector(".admin-menu-toggle");
+    const overlay = document.querySelector(".admin-overlay");
+    if (toggle) toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+    if (overlay) overlay.addEventListener("click", () => document.body.classList.remove("nav-open"));
+
+    // fill signed-in email if endpoint available
+    const who = document.querySelector("[data-admin-email]");
+    if (who) {
+      fetch("/api/admin/tributes?status=pending", { credentials: "include" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => { if (d && d.admin) who.textContent = d.admin; })
+        .catch(() => {});
     }
   }
 
@@ -67,6 +96,8 @@ window.AdminUI = (function () {
   function confirmDelete(thing) {
     return confirm(`Delete this ${thing}? This cannot be undone.`);
   }
+
+  document.addEventListener("DOMContentLoaded", initShell);
 
   return { escapeHtml, fmtDate, showMsg, apiJSON, apiUpload, confirmDelete };
 })();

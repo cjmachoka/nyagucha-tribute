@@ -12,14 +12,7 @@ const CATEGORY_LABEL = Object.fromEntries(CATEGORIES.map((c) => [c.id, c.label])
 let currentStatus = "pending";
 
 function showMsg(type, text) {
-  const el = document.getElementById("admin-msg");
-  if (!el) return;
-  el.className = `form-msg ${type === "ok" ? "ok" : "err"}`;
-  el.textContent = text;
-  el.hidden = false;
-  if (type === "ok") {
-    setTimeout(() => { el.hidden = true; }, 2500);
-  }
+  if (window.AdminUI) return AdminUI.showMsg(type, text);
 }
 
 function fmtDate(iso) {
@@ -104,7 +97,7 @@ async function loadList(status) {
       credentials: "include",
     });
     if (res.status === 401) {
-      list.innerHTML = `<p class="form-hint">Not signed in. Refresh and sign in with the family admin email.</p>`;
+      list.innerHTML = `<p class="muted-note">Not signed in. Refresh and sign in with the family admin email.</p>`;
       return;
     }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -114,16 +107,17 @@ async function loadList(status) {
     document.getElementById("count-approved").textContent = data.counts.approved || 0;
     document.getElementById("count-rejected").textContent = data.counts.rejected || 0;
     if (data.admin) {
-      document.getElementById("admin-who").textContent = `Signed in as ${data.admin}`;
+      const who = document.querySelector("[data-admin-email]");
+      if (who) who.textContent = data.admin;
     }
 
     if (!data.items.length) {
-      list.innerHTML = `<p class="form-hint">No ${status} tributes.</p>`;
+      list.innerHTML = `<p class="muted-note">No ${status} tributes.</p>`;
       return;
     }
     list.innerHTML = data.items.map(cardHtml).join("");
   } catch (err) {
-    list.innerHTML = `<p class="form-hint">Could not load tributes (${escapeHtml(err.message)}).</p>`;
+    list.innerHTML = `<p class="muted-note">Could not load tributes (${escapeHtml(err.message)}).</p>`;
   }
 }
 

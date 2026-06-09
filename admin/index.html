@@ -3,72 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Dr. Vincent Magubo Nyagucha</title>
+  <title>Admin · Tributes — Dr. Vincent Magubo Nyagucha</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/admin.css" />
 </head>
-<body>
-
-  <header class="site-header">
-    <div class="header-inner">
-      <a href="../index.html" class="brand">
-        <div class="brand-mark">VN</div>
-        <div class="brand-text">
-          <div class="brand-name">Dr. Vincent Nyagucha</div>
-          <div class="brand-role">Family admin</div>
+<body class="admin">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <div class="admin-brand-mark">VN</div>
+        <div class="admin-brand-text">
+          <div class="admin-brand-name">Vincent Nyagucha</div>
+          <div class="admin-brand-sub">Family admin</div>
         </div>
-      </a>
-      <nav aria-label="Main">
-        <ul class="site-nav">
-          <li><a href="../index.html">View site</a></li>
-          <li><a href="../tributes.html">Tributes</a></li>
-          <li><a href="../guestbook.html">Guestbook</a></li>
-          <li><a href="index.html" class="active">Admin</a></li>
-        </ul>
+      </div>
+      <nav class="admin-menu">
+        <a href="index.html" class="active">Tributes</a>
+        <a href="site.html">Site &amp; hero</a>
+        <a href="announcements.html">Announcements</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="biography.html">Biography</a>
       </nav>
-    </div>
-  </header>
+      <div class="admin-sidebar-foot">
+        <a href="../index.html" class="admin-side-link" target="_blank" rel="noopener">↗ View live site</a>
+        <div class="admin-user">Signed in as<strong data-admin-email>…</strong></div>
+      </div>
+    </aside>
+    <div class="admin-overlay"></div>
 
-  <div class="page-head">
-    <div class="page-head-inner">
-      <h1>Family admin</h1>
-      <p id="admin-who">Signed in</p>
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <button class="admin-menu-toggle" aria-label="Menu">☰</button>
+        <h1>Tributes</h1>
+        <span class="admin-topbar-sub">Approve messages before they appear publicly</span>
+      </header>
+
+      <div class="admin-content">
+        <div class="admin-tabs" role="tablist">
+          <button class="admin-tab active" data-status="pending" type="button">Pending <span class="tab-count" id="count-pending">0</span></button>
+          <button class="admin-tab" data-status="approved" type="button">Approved <span class="tab-count" id="count-approved">0</span></button>
+          <button class="admin-tab" data-status="rejected" type="button">Rejected <span class="tab-count" id="count-rejected">0</span></button>
+        </div>
+
+        <div id="admin-list" class="admin-list">
+          <p class="muted-note">Loading…</p>
+        </div>
+      </div>
     </div>
   </div>
 
-  <nav class="admin-subnav">
-    <div class="admin-subnav-inner">
-      <a href="index.html" class="active">Tributes</a>
-      <a href="site.html">Site</a>
-      <a href="announcements.html">Announcements</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="biography.html">Biography</a>
-    </div>
-  </nav>
-
-  <main class="section">
-    <div class="container">
-      <div class="admin-tabs" role="tablist">
-        <button class="admin-tab active" data-status="pending" type="button">Pending <span class="tab-count" id="count-pending">0</span></button>
-        <button class="admin-tab" data-status="approved" type="button">Approved <span class="tab-count" id="count-approved">0</span></button>
-        <button class="admin-tab" data-status="rejected" type="button">Rejected <span class="tab-count" id="count-rejected">0</span></button>
-      </div>
-
-      <div id="admin-msg" class="form-msg" hidden></div>
-      <div id="admin-list" class="admin-list">
-        <p class="form-hint">Loading…</p>
-      </div>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="footer-bar">In loving memory of Dr. Vincent Magubo Nyagucha</div>
-    <div class="footer-credit"><p>Made with love by Caleb Machoka</p></div>
-  </footer>
-
+  <div id="toast-root"></div>
+  <script src="../js/admin-common.js"></script>
   <script src="../js/admin.js"></script>
 </body>
 </html>
