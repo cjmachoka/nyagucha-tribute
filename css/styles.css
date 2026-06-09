@@ -305,13 +305,27 @@ a:hover { color: var(--blue-dark); }
 .hub-media {
   min-height: 300px;
   background: var(--placeholder);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   border-right: 1px solid var(--border);
+  overflow: hidden;
 }
 
+/* Fill mode (default): crop the photo to cover the block */
 .hub-media.has-photo { background-color: transparent; }
+.hub-media .hub-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Whole-image mode: show the entire picture (good for tall documents/letters) */
+.hub-media.fit-whole {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hub-media.fit-whole .hub-img {
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+}
 
 .hub-row.reverse .hub-media {
   border-right: none;

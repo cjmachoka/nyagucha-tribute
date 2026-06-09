@@ -113,7 +113,7 @@ async function moveHeroItem(idx, dir) {
 }
 
 const SECTION_PHOTOS = [
-  { slot: "notice", label: "Family notice" },
+  { slot: "notice", label: "Notice" },
   { slot: "biography", label: "Biography" },
   { slot: "tributes", label: "Tributes" },
   { slot: "gallery", label: "Gallery" },
@@ -126,17 +126,25 @@ function renderSectionPhotos(settings) {
   wrap.innerHTML = "";
   SECTION_PHOTOS.forEach((sec) => {
     const url = settings[`${sec.slot}_image_url`] || "";
+    const fit = settings[`${sec.slot}_image_fit`] === "whole" ? "whole" : "cover";
     const cell = document.createElement("div");
     cell.className = "section-photo";
     cell.innerHTML = `
       <h3>${sec.label}</h3>
-      <div class="section-photo-preview">${url ? `<img src="${AdminUI.escapeHtml(url)}" alt="" />` : `<span class="section-photo-empty">No photo</span>`}</div>
+      <div class="section-photo-preview ${fit === "whole" ? "whole" : ""}">${url ? `<img src="${AdminUI.escapeHtml(url)}" alt="" />` : `<span class="section-photo-empty">No photo</span>`}</div>
+      <select class="section-fit-select" aria-label="How to show this photo">
+        <option value="cover">Fill the box (crop)</option>
+        <option value="whole">Whole image (no crop)</option>
+      </select>
       <div class="section-photo-actions">
         <input type="file" accept="image/jpeg,image/png,image/webp" />
         <button class="btn btn-primary" data-up>Upload</button>
         <button class="btn btn-link admin-danger" data-rm ${url ? "" : "hidden"}>Remove</button>
       </div>`;
-    const fileInput = cell.querySelector("input");
+    const fileInput = cell.querySelector("input[type=file]");
+    const fitSelect = cell.querySelector(".section-fit-select");
+    fitSelect.value = fit;
+    fitSelect.addEventListener("change", () => setSectionFit(sec.slot, fitSelect.value, cell));
     cell.querySelector("[data-up]").addEventListener("click", () => uploadSectionPhoto(sec.slot, fileInput, cell));
     cell.querySelector("[data-rm]").addEventListener("click", () => removeSectionPhoto(sec.slot, cell));
     wrap.appendChild(cell);
@@ -162,6 +170,17 @@ async function uploadSectionPhoto(slot, fileInput, cell) {
     AdminUI.showMsg("err", err.message);
   } finally {
     btn.disabled = false;
+  }
+}
+
+async function setSectionFit(slot, value, cell) {
+  const preview = cell.querySelector(".section-photo-preview");
+  if (preview) preview.classList.toggle("whole", value === "whole");
+  try {
+    await AdminUI.apiJSON("PATCH", "/api/admin/settings", { [`${slot}_image_fit`]: value });
+    AdminUI.showMsg("ok", "Updated.");
+  } catch (err) {
+    AdminUI.showMsg("err", err.message);
   }
 }
 

@@ -39,7 +39,8 @@ async function patchSettings(request, env) {
   let body;
   try { body = await request.json(); } catch { return Response.json({ error: "Invalid JSON" }, { status: 400 }); }
 
-  const entries = Object.entries(body).filter(([k]) => EDITABLE_KEYS.has(k));
+  const isEditable = (k) => EDITABLE_KEYS.has(k) || /^(notice|biography|tributes|gallery|guestbook)_image_fit$/.test(k);
+  const entries = Object.entries(body).filter(([k]) => isEditable(k));
   if (entries.length === 0) {
     return Response.json({ error: "Nothing to update" }, { status: 400 });
   }

@@ -23,11 +23,19 @@
       }
     });
     document.querySelectorAll("[data-hub-bg]").forEach((el) => {
-      const url = s[`${el.dataset.hubBg}_image_url`];
-      if (url) {
-        el.style.backgroundImage = `url("${url}")`;
-        el.classList.add("has-photo");
-      }
+      const slot = el.dataset.hubBg;
+      const url = s[`${slot}_image_url`];
+      if (!url) return;
+      const whole = s[`${slot}_image_fit`] === "whole";
+      const img = document.createElement("img");
+      img.className = "hub-img";
+      img.src = url;
+      img.alt = "";
+      img.loading = "lazy";
+      el.innerHTML = "";
+      el.appendChild(img);
+      el.classList.add("has-photo");
+      el.classList.toggle("fit-whole", whole);
     });
 
     const media = Array.isArray(s.hero_media) ? s.hero_media.filter((m) => m && m.url) : [];
