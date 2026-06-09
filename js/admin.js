@@ -43,8 +43,9 @@ function categoryOptions(selected) {
 function cardHtml(t) {
   const isPending = t.status === "pending";
   const isApproved = t.status === "approved";
-  const photo = t.image_url
-    ? `<div class="admin-card-photo"><img src="${escapeHtml(t.image_url)}" alt="" /></div>`
+  const photos = t.photos || [t.image_url, t.image_url2].filter(Boolean);
+  const photo = photos.length
+    ? `<div class="admin-card-photo">${photos.map((u) => `<img src="${escapeHtml(u)}" alt="" />`).join("")}</div>`
     : "";
   return `
     <article class="admin-card" data-id="${t.id}">

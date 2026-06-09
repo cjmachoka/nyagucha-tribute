@@ -25,13 +25,17 @@ export async function onRequest(context) {
   const status = STATUSES.includes(statusParam) ? statusParam : "pending";
 
   const { results } = await env.DB.prepare(
-    `SELECT id, name, message, email, category, image_url, status, created_at
+    `SELECT id, name, message, email, category, image_url, image_url2, status, created_at
      FROM tributes
      WHERE status = ?
      ORDER BY created_at DESC`
   )
     .bind(status)
     .all();
+
+  for (const row of results) {
+    row.photos = [row.image_url, row.image_url2].filter(Boolean);
+  }
 
   const counts = await env.DB.prepare(
     `SELECT status, COUNT(*) AS n FROM tributes GROUP BY status`

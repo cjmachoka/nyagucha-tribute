@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS tributes (
   category    TEXT NOT NULL DEFAULT 'other',
   image_key   TEXT,
   image_url   TEXT,
+  image_key2  TEXT,
+  image_url2  TEXT,
   status      TEXT NOT NULL DEFAULT 'pending',
   created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );

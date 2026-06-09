@@ -1,16 +1,8 @@
+import { requireAdmin } from "../../../_lib/auth.js";
+import { deleteImage } from "../../../_lib/upload.js";
+
 const STATUSES = ["pending", "approved", "rejected"];
 const CATEGORIES = ["family", "friends", "colleagues", "patients", "community", "other"];
-
-function requireAdmin(request) {
-  const email = request.headers.get("Cf-Access-Authenticated-User-Email");
-  if (!email) {
-    return new Response(
-      JSON.stringify({ error: "Not authenticated. Sign in via Cloudflare Access." }),
-      { status: 401, headers: { "content-type": "application/json" } }
-    );
-  }
-  return null;
-}
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -82,9 +74,13 @@ async function updateTribute(request, env, id) {
 }
 
 async function deleteTribute(env, id) {
-  const result = await env.DB.prepare(`DELETE FROM tributes WHERE id = ?`).bind(id).run();
-  if (!result.success || result.meta.changes === 0) {
-    return Response.json({ error: "Tribute not found" }, { status: 404 });
-  }
+  const row = await env.DB.prepare(
+    `SELECT image_key, image_key2 FROM tributes WHERE id = ?`
+  ).bind(id).first();
+  if (!row) return Response.json({ error: "Tribute not found" }, { status: 404 });
+
+  await env.DB.prepare(`DELETE FROM tributes WHERE id = ?`).bind(id).run();
+  await deleteImage(env, row.image_key);
+  await deleteImage(env, row.image_key2);
   return Response.json({ ok: true, id, deleted: true });
 }

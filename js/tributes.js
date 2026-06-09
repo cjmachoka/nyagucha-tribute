@@ -25,11 +25,13 @@ function escapeHtml(str) {
 }
 
 function renderCard(t) {
-  const photo =
-    t.has_photo || t.image_url
-      ? `<div class="tribute-photo">Photo</div>`
-      : "";
-  return `<article class="tribute-card">${photo}<blockquote>${escapeHtml(t.message)}</blockquote><cite>— ${escapeHtml(t.name)}</cite></article>`;
+  const photos = t.photos || [t.image_url, t.image_url2].filter(Boolean);
+  const photoHtml = photos.length
+    ? `<div class="tribute-photos ${photos.length > 1 ? "two" : "one"}">${photos
+        .map((url) => `<img src="${escapeHtml(url)}" alt="" loading="lazy" />`)
+        .join("")}</div>`
+    : "";
+  return `<article class="tribute-card">${photoHtml}<blockquote>${escapeHtml(t.message)}</blockquote><cite>— ${escapeHtml(t.name)}</cite></article>`;
 }
 
 function renderNav(items) {

@@ -515,6 +515,21 @@ figure.ph figcaption {
   padding: 1.25rem;
 }
 
+.tribute-photos {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 0.85rem;
+}
+
+.tribute-photos.two { grid-template-columns: 1fr 1fr; }
+
+.tribute-photos img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
 .tribute-card blockquote {
   font-family: var(--serif);
   font-size: 1rem;
@@ -638,10 +653,13 @@ figure.ph figcaption {
 
 /* Guestbook */
 .form-panel {
-  max-width: 440px;
+  max-width: 560px;
+  margin: 0 auto;
   border: 1px solid var(--border);
-  padding: 1.5rem;
+  padding: 2rem;
 }
+
+.guestbook-section .lead { text-align: center; max-width: 560px; margin-left: auto; margin-right: auto; }
 
 .form-group { margin-bottom: 1rem; }
 

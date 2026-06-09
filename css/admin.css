@@ -331,7 +331,9 @@ body.admin .admin-card {
   padding: 1.1rem 1.25rem;
 }
 body.admin .admin-card:not(:has(.admin-card-photo)) { grid-template-columns: 1fr; }
-body.admin .admin-card-photo img { width: 100%; height: 150px; object-fit: cover; border-radius: var(--a-radius-sm); }
+body.admin .admin-card-photo { display: flex; flex-direction: column; gap: 6px; }
+body.admin .admin-card-photo img { width: 100%; height: 110px; object-fit: cover; border-radius: var(--a-radius-sm); }
+body.admin .admin-card-photo:has(img:only-child) img { height: 150px; }
 
 body.admin .admin-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.4rem; }
 body.admin .admin-card-head h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 0.15rem; }
