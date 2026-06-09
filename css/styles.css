@@ -319,17 +319,14 @@ a:hover { color: var(--blue-dark); }
    never runs away. Good for documents/letters. */
 .hub-media.fit-whole {
   background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
 }
 .hub-media.fit-whole .hub-img {
   position: static;
   width: 100%;
   height: auto;
-  max-height: 560px;
+  max-height: none;
   object-fit: contain;
+  display: block;
 }
 
 .hub-row.reverse .hub-media {
