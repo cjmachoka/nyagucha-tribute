@@ -6,3 +6,7 @@ pages_build_output_dir = "."
 binding = "DB"
 database_name = "nyagucha-tributes"
 database_id = "bedcc18c-6653-4325-9043-9d4a5ccb13ba"
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "nyagucha-images"

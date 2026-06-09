@@ -150,19 +150,29 @@ git add wrangler.toml && git commit -m "Add D1 database id" && git push
 
 ---
 
-## 5. Photo storage — Cloudflare R2 (dashboard only)
+## 5. Photo storage — Cloudflare R2 (later phase)
 
-**A. Create the bucket**
+> **Skip this until we build photo uploads.** The upload code is still a TODO in
+> `functions/api/tributes.js`. Adding an R2 binding before the bucket/feature is
+> ready can fail the deploy (like the bad D1 UUID did).
+
+> **Bindings are managed in `wrangler.toml`, not the dashboard.** Because this
+> project has a `wrangler.toml`, the dashboard shows *"Bindings for this project
+> are being managed through wrangler.toml"* and the **Add** button is disabled.
+> That's expected — all bindings (D1, R2) are added by editing `wrangler.toml`.
+
+**A. Create the bucket** (when ready)
 1. **dash.cloudflare.com** → top search bar → type **`R2`** → **R2 Object Storage**
-   (first use asks you to enable R2 — free tier, no card needed for the allowance)
+   (first use asks you to enable R2 — free tier)
 2. **Create bucket** → name: `nyagucha-images` → **Create**
 
-**B. Bind R2 to Pages**
-- Pages project → **Settings** → **Bindings** → **Add** → **R2 bucket**
-- Variable name: `IMAGES` · Bucket: `nyagucha-images` → **Save**
+**B. Add the binding to `wrangler.toml`** (then `git push`)
 
-Then redeploy: **Deployments** → top deployment → **⋯** → **Retry deployment**
-(or push any git change).
+```toml
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "nyagucha-images"
+```
 
 ---
 
