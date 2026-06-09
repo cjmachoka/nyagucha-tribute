@@ -376,7 +376,36 @@ body.admin .admin-gallery-cell img { width: 100%; aspect-ratio: 1; object-fit: c
 body.admin .admin-gallery-cell figcaption { padding: 0.55rem; display: flex; flex-direction: column; gap: 0.4rem; }
 body.admin .caption-input { width: 100%; padding: 0.4rem 0.55rem; font-size: 0.85rem; }
 body.admin .admin-gallery-actions { display: flex; justify-content: space-between; }
+body.admin .album-select { width: 100%; padding: 0.35rem 0.5rem; font-size: 0.82rem; }
 body.admin .upload-progress { margin-top: 0.75rem; font-size: 0.88rem; color: var(--a-muted); }
+
+/* Album filter chips */
+body.admin .album-filter { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.1rem; }
+body.admin .album-chip {
+  appearance: none;
+  border: 1px solid var(--a-border);
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--a-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+body.admin .album-chip span {
+  font-size: 0.72rem;
+  background: var(--a-surface-2);
+  border-radius: 999px;
+  padding: 0 0.4rem;
+  color: var(--a-muted);
+}
+body.admin .album-chip:hover { color: var(--a-text); }
+body.admin .album-chip.active { background: var(--a-accent); color: #fff; border-color: var(--a-accent); }
+body.admin .album-chip.active span { background: rgba(255,255,255,0.25); color: #fff; }
 
 /* ---- Biography ---- */
 body.admin .admin-chapter { border: 1px solid var(--a-border); border-radius: var(--a-radius); background: #fff; box-shadow: var(--a-shadow); padding: 1.1rem 1.25rem; margin-bottom: 1rem; }

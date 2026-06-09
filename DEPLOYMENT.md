@@ -203,6 +203,12 @@ git add wrangler.toml && git commit -m "Add D1 database id" && git push
 > every seed uses `INSERT OR IGNORE`. If a future build adds more tables, you'll
 > see a new `schema-*.sql` file to paste into the Console.
 
+> **Gallery albums:** the gallery supports albums (Childhood, Family, Career,
+> Friends, Travel & moments, Memorial, Other). The `album` column is included in
+> `schema-cms.sql`. **Only** if you created `gallery_photos` before this feature,
+> run `schema-gallery-album.sql` once to add the column (ignore a
+> "duplicate column name" error — it means you already have it).
+
 ---
 
 ## 5. Photo storage — Cloudflare R2

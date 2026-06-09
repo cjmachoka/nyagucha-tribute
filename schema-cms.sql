@@ -25,6 +25,7 @@ CREATE INDEX IF NOT EXISTS idx_announcements_order ON announcements(pinned DESC,
 CREATE TABLE IF NOT EXISTS gallery_photos (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   caption     TEXT,
+  album       TEXT NOT NULL DEFAULT 'other',
   image_key   TEXT NOT NULL,
   image_url   TEXT NOT NULL,
   position    INTEGER NOT NULL DEFAULT 0,
@@ -33,6 +34,7 @@ CREATE TABLE IF NOT EXISTS gallery_photos (
 );
 CREATE INDEX IF NOT EXISTS idx_gallery_status ON gallery_photos(status);
 CREATE INDEX IF NOT EXISTS idx_gallery_order ON gallery_photos(position ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_gallery_album ON gallery_photos(album);
 
 CREATE TABLE IF NOT EXISTS bio_chapters (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -544,6 +544,29 @@ figure.ph figcaption {
 }
 
 /* Gallery */
+.gallery-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.gallery-tab {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.9rem;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.gallery-tab:hover { color: var(--text); }
+.gallery-tab.active { background: var(--blue); color: var(--white); border-color: var(--blue); }
+
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

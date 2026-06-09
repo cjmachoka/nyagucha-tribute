@@ -1,5 +1,6 @@
 import { requireAdmin } from "../../../_lib/auth.js";
 import { deleteImage } from "../../../_lib/upload.js";
+import { GALLERY_ALBUMS } from "../../../_lib/albums.js";
 
 const STATUSES = ["published", "draft"];
 
@@ -23,6 +24,10 @@ async function update(request, env, id) {
   const sets = [];
   const binds = [];
   if (body.caption !== undefined) { sets.push("caption = ?"); binds.push(String(body.caption).trim() || null); }
+  if (body.album !== undefined) {
+    if (!GALLERY_ALBUMS.includes(body.album)) return Response.json({ error: "Invalid album" }, { status: 400 });
+    sets.push("album = ?"); binds.push(body.album);
+  }
   if (body.position !== undefined) { sets.push("position = ?"); binds.push(Number(body.position) || 0); }
   if (body.status !== undefined) {
     if (!STATUSES.includes(body.status)) return Response.json({ error: "Invalid status" }, { status: 400 });
