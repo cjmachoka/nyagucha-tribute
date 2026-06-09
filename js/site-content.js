@@ -42,6 +42,8 @@
     const slides = media.map((m, idx) => {
       const slide = document.createElement("div");
       slide.className = "hero-slide";
+      const fit = m.fit === "contain" ? "contain" : "cover";
+      const focus = m.focus || "center";
       if (m.type === "video") {
         const v = document.createElement("video");
         v.src = m.url;
@@ -50,12 +52,16 @@
         v.playsInline = true;
         v.setAttribute("playsinline", "");
         v.preload = idx === 0 ? "auto" : "none";
+        v.style.objectFit = fit;
+        v.style.objectPosition = focus;
         slide.appendChild(v);
       } else {
         const img = document.createElement("img");
         img.src = m.url;
         img.alt = "";
         img.loading = idx === 0 ? "eager" : "lazy";
+        img.style.objectFit = fit;
+        img.style.objectPosition = focus;
         slide.appendChild(img);
       }
       stage.appendChild(slide);

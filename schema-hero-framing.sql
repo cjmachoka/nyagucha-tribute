@@ -1,0 +1,2 @@
+ALTER TABLE hero_media ADD COLUMN fit TEXT NOT NULL DEFAULT 'cover';
+ALTER TABLE hero_media ADD COLUMN focus TEXT NOT NULL DEFAULT 'center';

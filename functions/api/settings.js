@@ -25,9 +25,14 @@ export async function onRequest(context) {
   settings.hero_media = [];
   try {
     const { results: media } = await env.DB.prepare(
-      `SELECT type, image_url FROM hero_media ORDER BY position ASC, id ASC`
+      `SELECT type, image_url, fit, focus FROM hero_media ORDER BY position ASC, id ASC`
     ).all();
-    settings.hero_media = (media || []).map((m) => ({ type: m.type, url: m.image_url }));
+    settings.hero_media = (media || []).map((m) => ({
+      type: m.type,
+      url: m.image_url,
+      fit: m.fit || "cover",
+      focus: m.focus || "center",
+    }));
   } catch (_) {
     // hero_media table not created yet — fall back to single hero image
   }

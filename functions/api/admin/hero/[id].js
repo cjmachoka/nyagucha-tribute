@@ -23,11 +23,20 @@ async function remove(id, env) {
   return Response.json({ ok: true });
 }
 
+const FITS = ["cover", "contain"];
+const FOCI = ["center", "top", "bottom", "left", "right"];
+
 async function update(id, request, env) {
   let body;
   try { body = await request.json(); } catch { return Response.json({ error: "Invalid JSON" }, { status: 400 }); }
   if (typeof body.position === "number") {
     await env.DB.prepare(`UPDATE hero_media SET position = ? WHERE id = ?`).bind(body.position, id).run();
+  }
+  if (typeof body.fit === "string" && FITS.includes(body.fit)) {
+    await env.DB.prepare(`UPDATE hero_media SET fit = ? WHERE id = ?`).bind(body.fit, id).run();
+  }
+  if (typeof body.focus === "string" && FOCI.includes(body.focus)) {
+    await env.DB.prepare(`UPDATE hero_media SET focus = ? WHERE id = ?`).bind(body.focus, id).run();
   }
   return Response.json({ ok: true });
 }

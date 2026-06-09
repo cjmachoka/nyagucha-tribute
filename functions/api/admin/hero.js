@@ -13,7 +13,7 @@ export async function onRequest(context) {
 
 async function list(env) {
   const { results } = await env.DB.prepare(
-    `SELECT id, type, image_url, position, created_at
+    `SELECT id, type, image_url, fit, focus, position, created_at
      FROM hero_media ORDER BY position ASC, id ASC`
   ).all();
   return Response.json({ items: results });

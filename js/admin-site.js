@@ -21,17 +21,32 @@ function renderHeroMedia() {
   heroItems.forEach((item, idx) => {
     const cell = document.createElement("figure");
     cell.className = "hero-media-cell";
+    const fit = item.fit === "contain" ? "contain" : "cover";
+    const focus = item.focus || "center";
+    const frameVal = fit === "contain" ? "contain|center" : `cover|${focus}`;
+    const objStyle = `object-fit:${fit};object-position:${focus};`;
     const media = item.type === "video"
-      ? `<video src="${AdminUI.escapeHtml(item.image_url)}" muted playsinline preload="metadata"></video><span class="hero-media-badge">▶ clip</span>`
-      : `<img src="${AdminUI.escapeHtml(item.image_url)}" alt="" />`;
+      ? `<video src="${AdminUI.escapeHtml(item.image_url)}" style="${objStyle}" muted playsinline preload="metadata"></video><span class="hero-media-badge">▶ clip</span>`
+      : `<img src="${AdminUI.escapeHtml(item.image_url)}" style="${objStyle}" alt="" />`;
     cell.innerHTML = `
       ${media}
       <figcaption>
-        <button class="btn btn-link" data-move="up" ${idx === 0 ? "disabled" : ""} aria-label="Move earlier">↑</button>
-        <span class="hero-media-pos">${idx + 1}</span>
-        <button class="btn btn-link" data-move="down" ${idx === heroItems.length - 1 ? "disabled" : ""} aria-label="Move later">↓</button>
-        <button class="btn btn-link admin-danger" data-del aria-label="Delete">Delete</button>
+        <select class="hero-frame-select" aria-label="Framing">
+          <option value="cover|center">Fill · center</option>
+          <option value="cover|top">Fill · top</option>
+          <option value="cover|bottom">Fill · bottom</option>
+          <option value="contain|center">Whole image</option>
+        </select>
+        <div class="hero-media-controls">
+          <button class="btn btn-link" data-move="up" ${idx === 0 ? "disabled" : ""} aria-label="Move earlier">↑</button>
+          <span class="hero-media-pos">${idx + 1}</span>
+          <button class="btn btn-link" data-move="down" ${idx === heroItems.length - 1 ? "disabled" : ""} aria-label="Move later">↓</button>
+          <button class="btn btn-link admin-danger" data-del aria-label="Delete">Delete</button>
+        </div>
       </figcaption>`;
+    const select = cell.querySelector(".hero-frame-select");
+    select.value = frameVal;
+    select.addEventListener("change", () => setHeroFraming(item, cell, select.value));
     cell.querySelector("[data-del]").addEventListener("click", () => deleteHeroItem(item.id));
     cell.querySelector('[data-move="up"]').addEventListener("click", () => moveHeroItem(idx, -1));
     cell.querySelector('[data-move="down"]').addEventListener("click", () => moveHeroItem(idx, 1));
@@ -56,6 +71,23 @@ async function deleteHeroItem(id) {
     heroItems = heroItems.filter((i) => i.id !== id);
     renderHeroMedia();
     AdminUI.showMsg("ok", "Removed.");
+  } catch (err) {
+    AdminUI.showMsg("err", err.message);
+  }
+}
+
+async function setHeroFraming(item, cell, value) {
+  const [fit, focus] = value.split("|");
+  item.fit = fit;
+  item.focus = focus;
+  const mediaEl = cell.querySelector("img, video");
+  if (mediaEl) {
+    mediaEl.style.objectFit = fit;
+    mediaEl.style.objectPosition = focus;
+  }
+  try {
+    await AdminUI.apiJSON("PATCH", `/api/admin/hero/${item.id}`, { fit, focus });
+    AdminUI.showMsg("ok", "Framing updated.");
   } catch (err) {
     AdminUI.showMsg("err", err.message);
   }

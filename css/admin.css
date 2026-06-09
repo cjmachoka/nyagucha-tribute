@@ -384,9 +384,11 @@ body.admin .hero-media-badge {
   padding: 0.15rem 0.4rem; border-radius: 999px;
 }
 body.admin .hero-media-cell figcaption {
-  display: flex; align-items: center; justify-content: center; gap: 0.35rem;
-  padding: 0.4rem; background: #fff;
+  display: flex; flex-direction: column; gap: 0.4rem;
+  padding: 0.5rem; background: #fff;
 }
+body.admin .hero-media-controls { display: flex; align-items: center; justify-content: center; gap: 0.35rem; }
+body.admin .hero-frame-select { width: 100%; padding: 0.35rem 0.5rem; font: inherit; font-size: 0.8rem; border: 1px solid var(--a-border); border-radius: var(--a-radius-sm); background: #fff; }
 body.admin .hero-media-pos { font-size: 0.8rem; color: var(--a-muted); min-width: 1.2rem; text-align: center; }
 body.admin .hero-progress { font-size: 0.82rem; color: var(--a-muted); }
 body.admin .hero-empty {
