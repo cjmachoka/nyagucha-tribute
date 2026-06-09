@@ -1,0 +1,66 @@
+{
+  "title": "Biography",
+  "chapters": [
+    {
+      "id": "early-life",
+      "heading": "Early life and family",
+      "paragraphs": [
+        "[ Birth date and place — to be added. ] Vincent Magubo Nyagucha was born to [ parents' names ] in [ town / county ].",
+        "[ Childhood memories — to be added by family. ]"
+      ],
+      "media": { "layout": "2", "placeholders": ["Childhood photo", "Young Vincent"] }
+    },
+    {
+      "id": "education",
+      "heading": "Education and training",
+      "paragraphs": [
+        "[ Primary and secondary schools — to be added. ]",
+        "Vincent studied medicine at [ university ] and specialized in ophthalmology at [ institution ]."
+      ],
+      "media": null
+    },
+    {
+      "id": "career",
+      "heading": "Career as an ophthalmologist",
+      "paragraphs": [
+        "Dr. Nyagucha practised ophthalmology for [ number ] years at [ hospitals / clinics — to be added ].",
+        "[ Mentorship, approach to patients — to be added. ]"
+      ],
+      "media": { "layout": "2", "placeholders": ["At the clinic", "Professional portrait"] }
+    },
+    {
+      "id": "achievements",
+      "heading": "Achievements and recognition",
+      "paragraphs": [
+        "[ Awards, publications, memberships — append over time. ]"
+      ],
+      "media": { "layout": "4", "placeholders": ["Award", "Recognition", "Conference", "Professional"] }
+    },
+    {
+      "id": "family",
+      "heading": "Family",
+      "paragraphs": [
+        "Vincent married [ spouse ] and was father to [ children — to be added ].",
+        "[ Home life — to be added. ]"
+      ],
+      "media": { "layout": "full", "placeholders": ["Family photograph"] }
+    },
+    {
+      "id": "community",
+      "heading": "Community and faith",
+      "paragraphs": [
+        "[ Church, faith, community service — to be added. ]"
+      ],
+      "media": null
+    },
+    {
+      "id": "legacy",
+      "heading": "Legacy",
+      "paragraphs": [
+        "Vincent leaves behind family, friends, patients, and colleagues who carry his memory forward.",
+        "[ Final resting place — to be added. ]"
+      ],
+      "media": { "layout": "2", "placeholders": ["Memorial", "Celebration of life"] }
+    }
+  ]
+}

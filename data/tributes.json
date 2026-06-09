@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "name": "His daughter",
+    "message": "Dad, you taught us to be kind before being clever. Every time I see someone help a stranger, I think of you. We miss you beyond words.",
+    "category": "family",
+    "image_url": null,
+    "created_at": "2026-06-01"
+  },
+  {
+    "id": 2,
+    "name": "A niece",
+    "message": "Uncle Vincent always had time for us. He never made you feel small. He listened — really listened — and you left feeling lighter.",
+    "category": "family",
+    "image_url": null,
+    "created_at": "2026-06-02"
+  },
+  {
+    "id": 3,
+    "name": "A childhood friend",
+    "message": "From primary school to now, you were the same Vincent — steady, funny, and true. My brother, my friend. Rest well.",
+    "category": "friends",
+    "image_url": null,
+    "created_at": "2026-06-02"
+  },
+  {
+    "id": 4,
+    "name": "University roommate",
+    "message": "We survived exams, empty pockets, and too many late nights together. You carried that same loyalty into everything you did in life.",
+    "category": "friends",
+    "image_url": null,
+    "created_at": "2026-06-03"
+  },
+  {
+    "id": 5,
+    "name": "Fellow ophthalmologist",
+    "message": "Vincent was the colleague you wanted on a difficult case — calm, precise, and always willing to teach. The profession has lost a fine doctor.",
+    "category": "colleagues",
+    "image_url": null,
+    "created_at": "2026-06-03"
+  },
+  {
+    "id": 6,
+    "name": "Hospital nursing team",
+    "message": "He knew every nurse by name and never walked past without a greeting. He made our ward feel human. We grieve with his family.",
+    "category": "colleagues",
+    "image_url": null,
+    "created_at": "2026-06-04"
+  },
+  {
+    "id": 7,
+    "name": "The Okello family",
+    "message": "You gave my mother her sight back, and sat with us afterwards with such kindness. We are forever grateful.",
+    "category": "patients",
+    "image_url": null,
+    "has_photo": true,
+    "created_at": "2026-06-04"
+  },
+  {
+    "id": 8,
+    "name": "Former patient",
+    "message": "I was terrified going into surgery. Dr. Nyagucha held my hand and said, 'We will take care of you.' He did. God rest his soul.",
+    "category": "patients",
+    "image_url": null,
+    "created_at": "2026-06-05"
+  }
+]
