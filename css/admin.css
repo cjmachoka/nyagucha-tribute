@@ -368,7 +368,22 @@ body.admin .hero-preview {
   max-height: 300px;
 }
 body.admin .hero-preview img { width: 100%; max-height: 300px; object-fit: cover; display: block; }
-body.admin .hero-empty { padding: 3.5rem 1rem; text-align: center; color: var(--a-muted); font-size: 0.85rem; }
+body.admin .hero-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  min-height: 160px;
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--a-muted);
+  font-size: 0.9rem;
+  border: 1.5px dashed var(--a-border);
+  border-radius: var(--a-radius-sm);
+}
+body.admin .hero-empty-ico { font-size: 1.6rem; line-height: 1; color: var(--a-accent); }
+body.admin .hero-empty-sub { font-size: 0.78rem; opacity: 0.8; }
 body.admin .admin-inline-form { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
 
 /* ---- Gallery ---- */

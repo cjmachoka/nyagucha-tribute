@@ -97,7 +97,58 @@ window.AdminUI = (function () {
     return confirm(`Delete this ${thing}? This cannot be undone.`);
   }
 
+  // Downscale + compress an image in the browser before upload.
+  // Keeps small images untouched; large ones are scaled to fit maxDim and
+  // re-encoded as JPEG so uploads stay well under the 5 MB limit.
+  async function resizeImage(file, opts) {
+    const o = opts || {};
+    const maxDim = o.maxDim || 2400;
+    const quality = o.quality || 0.85;
+    const softLimit = o.softLimit || 1.5 * 1024 * 1024;
+    if (!file || !/^image\/(jpeg|png|webp)$/.test(file.type)) return file;
+
+    let img;
+    try {
+      const dataUrl = await new Promise((resolve, reject) => {
+        const fr = new FileReader();
+        fr.onload = () => resolve(fr.result);
+        fr.onerror = () => reject(new Error("Could not read the image"));
+        fr.readAsDataURL(file);
+      });
+      img = await new Promise((resolve, reject) => {
+        const im = new Image();
+        im.onload = () => resolve(im);
+        im.onerror = () => reject(new Error("Could not load the image"));
+        im.src = dataUrl;
+      });
+    } catch {
+      return file; // fall back to the original file on any failure
+    }
+
+    const { width, height } = img;
+    if (width <= maxDim && height <= maxDim && file.size <= softLimit) {
+      return file;
+    }
+
+    const scale = Math.min(1, maxDim / Math.max(width, height));
+    const w = Math.max(1, Math.round(width * scale));
+    const h = Math.max(1, Math.round(height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+    if (!blob) return file;
+    const base = (file.name || "photo").replace(/\.[^.]+$/, "");
+    return new File([blob], `${base}.jpg`, { type: "image/jpeg", lastModified: Date.now() });
+  }
+
   document.addEventListener("DOMContentLoaded", initShell);
 
-  return { escapeHtml, fmtDate, showMsg, apiJSON, apiUpload, confirmDelete };
+  return { escapeHtml, fmtDate, showMsg, apiJSON, apiUpload, confirmDelete, resizeImage };
 })();
