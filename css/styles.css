@@ -1212,6 +1212,14 @@ figure.ph figcaption {
   .tribute-section-head { flex-wrap: wrap; gap: 0.2rem; }
 }
 
+/* On phones the home hub rows stack, so center the section images */
+@media (max-width: 768px) {
+  .hub-media.fit-whole,
+  .hub-row.reverse .hub-media.fit-whole {
+    justify-content: center;
+  }
+}
+
 /* Lightbox (click-to-enlarge images) */
 .gallery-grid img,
 .tribute-photos img,
