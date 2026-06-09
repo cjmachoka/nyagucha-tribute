@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "npx wrangler pages dev .",
+    "deploy": "npx wrangler pages deploy .",
     "db:migrate": "npx wrangler d1 execute nyagucha-tributes --file=schema.sql"
   }
 }
