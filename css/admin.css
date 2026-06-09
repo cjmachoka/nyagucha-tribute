@@ -376,6 +376,7 @@ body.admin .admin-gallery-cell img { width: 100%; aspect-ratio: 1; object-fit: c
 body.admin .admin-gallery-cell figcaption { padding: 0.55rem; display: flex; flex-direction: column; gap: 0.4rem; }
 body.admin .caption-input { width: 100%; padding: 0.4rem 0.55rem; font-size: 0.85rem; }
 body.admin .admin-gallery-actions { display: flex; justify-content: space-between; }
+body.admin .upload-progress { margin-top: 0.75rem; font-size: 0.88rem; color: var(--a-muted); }
 
 /* ---- Biography ---- */
 body.admin .admin-chapter { border: 1px solid var(--a-border); border-radius: var(--a-radius); background: #fff; box-shadow: var(--a-shadow); padding: 1.1rem 1.25rem; margin-bottom: 1rem; }

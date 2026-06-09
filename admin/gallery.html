@@ -43,17 +43,15 @@
 
       <div class="admin-content">
         <section class="card">
-          <h2 class="card-title">Add a photo <span class="hint">JPG/PNG/WebP · 5 MB max</span></h2>
+          <h2 class="card-title">Add photos <span class="hint">select several at once · JPG/PNG/WebP · 5 MB each</span></h2>
           <form id="gallery-form">
             <div class="form-group">
-              <label for="gal-file">Image</label>
-              <input type="file" id="gal-file" name="file" accept="image/jpeg,image/png,image/webp" required />
+              <label for="gal-file">Images</label>
+              <input type="file" id="gal-file" name="file" accept="image/jpeg,image/png,image/webp" multiple required />
+              <p class="form-hint">Tip: hold ⌘/Ctrl or Shift to pick many photos. Captions can be added after upload.</p>
             </div>
-            <div class="form-group">
-              <label for="gal-caption">Caption (optional)</label>
-              <input type="text" id="gal-caption" name="caption" />
-            </div>
-            <button type="submit" class="btn btn-primary">Upload photo</button>
+            <button type="submit" class="btn btn-primary">Upload</button>
+            <div id="upload-progress" class="upload-progress" hidden></div>
           </form>
         </section>
 

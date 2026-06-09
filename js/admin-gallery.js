@@ -32,23 +32,37 @@ async function load() {
 async function onUpload(e) {
   e.preventDefault();
   const form = e.target;
-  const file = form.file.files[0];
-  if (!file) return;
-  const fd = new FormData();
-  fd.append("file", file);
-  if (form.caption.value.trim()) fd.append("caption", form.caption.value.trim());
+  const files = Array.from(form.file.files || []);
+  if (!files.length) return;
+
   const submitBtn = form.querySelector("button[type=submit]");
+  const progress = document.getElementById("upload-progress");
   submitBtn.disabled = true;
-  try {
-    await AdminUI.apiUpload("/api/admin/gallery", fd);
-    form.reset();
-    AdminUI.showMsg("ok", "Uploaded.");
-    load();
-  } catch (err) {
-    AdminUI.showMsg("err", err.message);
-  } finally {
-    submitBtn.disabled = false;
+
+  let done = 0;
+  let failed = 0;
+  const total = files.length;
+  if (progress) { progress.hidden = false; }
+
+  for (const file of files) {
+    if (progress) progress.textContent = `Uploading ${done + failed + 1} of ${total}…`;
+    const fd = new FormData();
+    fd.append("file", file);
+    try {
+      await AdminUI.apiUpload("/api/admin/gallery", fd);
+      done++;
+    } catch (err) {
+      failed++;
+      AdminUI.showMsg("err", `${file.name}: ${err.message}`);
+    }
   }
+
+  if (progress) progress.hidden = true;
+  form.reset();
+  submitBtn.disabled = false;
+
+  if (done) AdminUI.showMsg("ok", `${done} photo${done > 1 ? "s" : ""} uploaded${failed ? `, ${failed} failed` : ""}.`);
+  load();
 }
 
 async function onListClick(e) {
