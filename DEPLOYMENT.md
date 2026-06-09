@@ -38,7 +38,11 @@ js/tributes.js        Loads + groups tributes by section
 js/guestbook.js       Validates + submits guestbook
 data/tributes.json    Sample tributes (fallback before D1)
 data/biography.json   Biography structure
-functions/api/tributes.js   API: GET approved, POST pending
+admin/index.html      Admin panel (locked by Cloudflare Access)
+js/admin.js           Admin logic (approve/reject/delete)
+functions/api/tributes.js   Public API: GET approved, POST pending
+functions/api/admin/tributes.js       Admin API: GET pending/approved/rejected
+functions/api/admin/tributes/[id].js  Admin API: PATCH (approve/reject), DELETE
 schema.sql            D1 table: tributes
 wrangler.toml         D1 binding config (needs real database_id)
 package.json          helper scripts (CLI; not usable on this machine)
@@ -56,11 +60,11 @@ DEPLOYMENT.md         this guide
 | D1 database created + schema applied + bound | Done |
 | R2 bucket created + bound | Done (plumbing only — upload code TODO) |
 | Site live on `*.pages.dev` | Done |
-| Admin panel (`/admin`) — approve / reject tributes | **NEXT** |
-| Resend email notification on new tribute | After admin |
-| Photo upload code (uses R2) | After admin |
+| Admin panel (`/admin`) — approve / reject / delete | Done (code) — needs Access lock |
+| Cloudflare Access on `/admin` + `/api/admin` | **NEXT** (Step 9) |
+| Resend email notification on new tribute | After Access |
+| Photo upload code (uses R2) | After Access |
 | Turnstile spam protection | After upload code |
-| Cloudflare Access on `/admin` | Pairs with admin page |
 | Custom domain | When name decided |
 | Email Routing (`tributes@yourdomain`) | After domain |
 
@@ -225,27 +229,77 @@ After adding any variable, redeploy: **Deployments** → top deployment → **�
 
 ---
 
-## 9. Admin login — Cloudflare Access (you only)
+## 9. Admin login — Cloudflare Access
 
-1. Cloudflare → **Zero Trust** ([one.dash.cloudflare.com](https://one.dash.cloudflare.com))
-2. Complete first-time Zero Trust setup (free team name)
-3. **Access** → **Applications** → **Add an application** → **Self-hosted**
-4. Name: `Nyagucha Admin`
-5. **Path:** `/admin` (or `/admin/*`)
-6. **Policy:** Allow → **Include** → **Emails** → **your admin email only**
-7. Save
+The admin panel lives at **`/admin`** on the live site. It must be locked so
+only the family can approve/reject submissions. Cloudflare Access does this
+without any password — the admin gets a one-time login code by email.
 
-Test: visit `/admin` → you should get an email-code login.
+**Two protected paths** (the second is the admin API — protect it too or
+someone could call it directly):
+
+| Path | Why |
+|------|-----|
+| `/admin/*` | The admin UI |
+| `/api/admin/*` | The admin API (approve, reject, delete) |
+
+### Step-by-step
+
+1. Open **[one.dash.cloudflare.com](https://one.dash.cloudflare.com)** (Zero Trust)
+2. First time only: pick a free **team name** (e.g. `nyagucha`)
+3. Left sidebar → **Access** → **Applications** → **Add an application** → **Self-hosted**
+4. **Application Configuration:**
+   - **Application name:** `Nyagucha Admin`
+   - **Session duration:** `24 hours`
+   - **Application domain:** your `*.pages.dev` URL → **Path:** `admin`
+   - **+ Add another domain/path** → same domain → **Path:** `api/admin`
+5. **Identity providers:** keep **One-time PIN** ticked (sends a code to the email)
+6. **Next** → **Add a policy:**
+   - **Policy name:** `Family admins`
+   - **Action:** `Allow`
+   - **Include** → **Emails** → add:
+     - `cjmachoka@gmail.com`
+     - `remembering.vincent@gmail.com`
+   - *(later: add Vincent's daughter's email when she's ready)*
+7. **Next** → **Add application**
+
+### Test it
+
+1. Open your site → add `/admin` to the URL
+2. You should see a Cloudflare login page asking for your email
+3. Enter `cjmachoka@gmail.com` → check inbox → enter the 6-digit code
+4. You land on the admin panel showing pending tributes
+
+Once logged in, the same session works for the API automatically (Access sets a
+cookie that the admin page sends along).
 
 ---
 
-## 10. Notification inbox (after domain) — hand-over ready
+## 10. Notification inbox — hand-over ready
 
+Notifications about new pending tributes go to a dedicated Gmail that you'll
+hand over to Vincent's daughter when she's ready. This is **separate from your
+admin login** (`cjmachoka@gmail.com`), so the inbox can change owners without
+affecting site access.
+
+**Designated notification inbox:** `remembering.vincent@gmail.com`
+
+### Before custom domain
+- `NOTIFY_EMAIL` = `remembering.vincent@gmail.com`
+- The Function (once Resend is wired in Step 7) sends notifications from
+  Resend's shared `onboarding@resend.dev` address to that Gmail
+
+### After custom domain (cleaner, professional)
 1. Cloudflare → your domain → **Email** → **Email Routing** → enable
-2. **Create address:** `tributes@yourdomain` → forward to your Gmail (verify)
-3. Set `NOTIFY_EMAIL=tributes@yourdomain` in Pages env → redeploy
+2. **Create address:** `tributes@yourdomain` → forward to `remembering.vincent@gmail.com`
+3. Update Pages env: `NOTIFY_EMAIL = tributes@yourdomain` → redeploy
 
-> **Hand-over later:** Email Routing → edit destination → daughter's Gmail. The site and address stay the same.
+### Handing over to the daughter (any time)
+- **Easy:** in Gmail, share the password / give her the recovery options
+- **Cleaner (after domain):** Email Routing → edit destination → her Gmail. The
+  site keeps working, the address `tributes@yourdomain` stays the same, only
+  the underlying inbox owner changes
+- Also add her email to **Cloudflare Access** (Step 9) so she can use the admin panel
 
 ---
 
