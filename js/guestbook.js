@@ -61,7 +61,7 @@ async function onSubmit(e) {
 
     const res = await fetch("/api/tributes", { method: "POST", body: fd });
     if (res.ok) {
-      showMsg("ok", "Thank you. Your message will appear after family review.");
+      showMsg("ok", "Thank you — your message has been submitted.");
       form.reset();
       return;
     }
