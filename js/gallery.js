@@ -58,7 +58,7 @@ function renderGrid() {
     const data = await res.json();
     allItems = data.items || [];
     if (!allItems.length) {
-      grid.innerHTML = `<p class="form-hint">Photos will appear here as the family adds them.</p>`;
+      grid.innerHTML = "";
       return;
     }
     renderTabs(data.albums || []);
